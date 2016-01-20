@@ -1,0 +1,15 @@
+html
+  head
+    title!= title
+    style.
+      td {
+        border:1px solid black;
+      }
+  body
+    table
+      thead
+      tbody
+      for object in objects
+        tr
+          for subobject in object
+            td= subobject
