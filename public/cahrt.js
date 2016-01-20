@@ -6,7 +6,6 @@ google.charts.load('current', {'packages':['corechart']});
             var table = [['create','sell','buy','nbrb']];
             for(var i in result){
               var tmp = [];
-              console.log(tmp[0]);
               tmp.push(new Date(result[i].create));
               tmp.push(+result[i].sell.replace(' ', ''));
               tmp.push(+result[i].buy.replace(' ', ''));

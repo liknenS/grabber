@@ -1,15 +1,19 @@
 html
   head
     title!= title
-    style.
-      td {
-        border:1px solid black;
-      }
+    link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+    
+    script(type="text/javascript" src="/public/xhr.js")
+    script(type="text/javascript" src="https://www.gstatic.com/charts/loader.js")
+    script(type="text/javascript" src="/public/cahrt.js")
+
   body
-    table
-      thead
-      tbody
-      for object in objects
-        tr
-          for subobject in object
-            td= subobject
+    .container
+      #curve_chart(style="width: 900px; height: 500px")
+      table.table
+        thead
+        tbody
+        for object in objects
+          tr
+            for subobject in object
+              td= subobject
