@@ -17,7 +17,6 @@ google.charts.load('current', {'packages':['corechart']});
 
         var options = {
           title: 'Company Performance',
-          curveType: 'function',
           legend: { position: 'bottom' }
         };
 

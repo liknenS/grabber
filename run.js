@@ -1,18 +1,23 @@
-var mysql      = require('mysql');
 var request = require('request');
-//var http = require('');
-
+var db = require('./db/db');
+var parser = require('./parser');
+var notifier = require('node-notifier');
 var express = require('express');
+var _ = require('underscore');
+
 var app = express();
 app.set('view engine', 'jade');
+app.set('port', (process.env.PORT || 5000));
 app.use('/public', express.static('public'));
+if(process.env.PORT){
+	
+}
 
 app.get('/', function (req, res) {
   res.render('index', { title: 'Hey', message: 'Hello there!'});
 })
 app.get('/table', function (req, res) {
-	var con = newConn();
-	con.query('SELECT * FROM grab_by',function(err, result){
+	db.getAllFromBase('grab_by',function(result){
 		var table = [];
 		for(var i in result){
 			var tmp = [];
@@ -21,51 +26,50 @@ app.get('/table', function (req, res) {
 			}
 			table.push(tmp);
 		}
-		
   		res.render('table', {objects: table} );
 	});
-	con.end();
 
 })
 app.get('/table.json', function (req, res) {
-	var con = newConn();
-	con.query('SELECT * FROM grab_by',function(err, result){
+	db.getAllFromBase('grab_by',function(result){
 		res.send(result);
 	});
-	con.end();
 })
 
-app.listen(3030,'192.168.0.109');
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
 
-function newConn(){
-	return mysql.createConnection({
-	  host     : '127.0.0.1',
-	  user     : 'root',
-	  database : 'nik'
-	});
+	
+var conf = { 
+	buy: '.cursList_table tr:nth-child(2) td:nth-child(2) big',
+	sell: '.cursList_table tr:nth-child(2) td:nth-child(3) big',
+	nbrb: '.cursList_table tr:nth-child(2) td:nth-child(4) big'
 }
-
-function saveToDb(obj){
-	var connection = newConn();
-	var query = connection.query('INSERT INTO grab_by SET ?', obj, function(err, result) {
-		console.log(result);
-	});
-	console.log(query.sql); // INSERT INTO posts SET `id` = 1, `title` = 'Hello MySQL'
-
-	// connection.connect();
-	// connection.query(query.sql, function(err, rows, fields) {
-	// 	 if (err) throw err;
-	// });
-	 connection.end();
+//parser.parseTutBy(conf, console.log.bind(console));
+var courseTmp ={
+	buy: 0,
+	sell: 0,
+	nbrb: 0
 }
+function saveParsed(){
+	parser.parseTutBy(conf, function (res) {
+	    db.saveToBase('grab_by', res);
 
-setInterval(function(){
-	request('https://www.kimonolabs.com/api/70eqfyeu?apikey=iysx7RmhVje46sO9ntpkFJLZuN13YKnj&kimmodify=1', function (error, response, body) {
-	  if (!error && response.statusCode == 200) {
-	    var tmp = JSON.parse(body);
-	    tmp.create = new Date(tmp.create);
-	    console.log(tmp);
-	    saveToDb(tmp);
-	  }
+	    delete res.create;
+		res.buy = +res.buy.replace(' ', '');
+		res.sell = +res.sell.replace(' ', '');
+		if(!_.isEqual(courseTmp, res)){
+			notifier.notify({
+			  'title': 'New Course',
+			  'message': 'buy:' +res.buy+' ('+(res.buy - courseTmp.buy )+ ') || sell:' + res.sell +' ('+ (res.sell - courseTmp.sell) +')'
+			});
+		}
+	    courseTmp = res;
 	});
-}, 10*60*1000);
+};
+function loop(){
+	saveParsed();
+	setTimeout(loop,2*60*1000);
+}
+loop();
