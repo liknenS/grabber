@@ -68,6 +68,6 @@ function saveParsed(){
 };
 function loop(){
 	saveParsed();
-	setTimeout(loop,2*60*1000);
+	setTimeout(loop,12*60*1000);
 }
 setTimeout(loop,2*1000);
