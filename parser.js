@@ -1,9 +1,9 @@
 var request = require('request');
 var cheerio = require("cheerio");
 
-function parseTutBy(config, cb){
+function parsePage(url, config, cb){
 	request({
-	  uri: "http://finance.tut.by/kurs/",
+	  uri: url,
 		}, function(error, response, body) {
 		  var $ = cheerio.load(body);
 		  var res = {};
@@ -16,5 +16,5 @@ function parseTutBy(config, cb){
 }
 
 module.exports = {
-	parseTutBy: parseTutBy
+	parsePage: parsePage
 }

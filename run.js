@@ -38,7 +38,7 @@ app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
 
-	
+var tutByUrl = "http://finance.tut.by/kurs/";
 var conf = { 
 	buy: '.cursList_table tr:nth-child(2) td:nth-child(2) big',
 	sell: '.cursList_table tr:nth-child(2) td:nth-child(3) big',
@@ -51,7 +51,7 @@ var courseTmp ={
 	nbrb: 0
 }
 function saveParsed(){
-	parser.parseTutBy(conf, function (res) {
+	parser.parsePage(tutByUrl, conf, function (res) {
 	    db.saveToBase('grab_by', res);
 
 	    delete res.createtime;

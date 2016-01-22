@@ -1,12 +1,14 @@
 var db;
 var squel;  
 
-if(false&&process.env.DATABASE_URL){
+if(!process.env.DATABASE_URL){
+
 	db = require('./mysql');
 	console.log('mysql');
 	squel = require('squel').useFlavour('mysql');
 }
 else {
+
 	db = require('./pg');
 	console.log('pg');
 	squel = require('squel').useFlavour('postgres');
