@@ -3,10 +3,10 @@ google.charts.load('current', {'packages':['corechart']});
 
       function drawChart() {
         XHR.get("/table.json").then(function(result) {
-            var table = [['create','sell','buy','nbrb']];
+            var table = [['createtime','sell','buy','nbrb']];
             for(var i in result){
               var tmp = [];
-              tmp.push(new Date(result[i].create));
+              tmp.push(new Date(result[i].createtime));
               tmp.push(+result[i].sell.replace(' ', ''));
               tmp.push(+result[i].buy.replace(' ', ''));
               tmp.push(+result[i].nbrb.replace(' ', ''));

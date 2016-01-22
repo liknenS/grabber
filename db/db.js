@@ -1,30 +1,40 @@
-var mysql      = require('mysql');
+var db;
+var squel;  
 
-function newConn(){
-	return mysql.createConnection({
-	  host     : '127.0.0.1',
-	  user     : 'root',
-	  database : 'nik'
-	});
+if(false&&process.env.DATABASE_URL){
+	db = require('./mysql');
+	console.log('mysql');
+	squel = require('squel').useFlavour('mysql');
 }
+else {
+	db = require('./pg');
+	console.log('pg');
+	squel = require('squel').useFlavour('postgres');
+}
+
+squel.registerValueHandler(Date, function(date) {
+	var s = date.toISOString();
+  return "'"+s+"'";
+});
 
 function saveToBase(base, obj){
-	var connection = newConn();
-	var query = connection.query('INSERT INTO ' + base + ' SET ?', obj, function(err, result) {
-	});
-	connection.end();
+	var query = squel.insert()
+        .into(base)
+        .setFields(obj)
+        .toString();
+        console.log(query);
+	db.query(query, function(result) {
+	})
 }
+
 function getAllFromBase(base, cb){
-	var connection = newConn();
-	connection.query('SELECT * FROM '+ base, function(err,res){
-		cb(res);
-	});
-
-	connection.end();
-
+	var query = squel.select()
+        .from(base)
+        .toString();
+    db.query(query, cb);
 }
+
 module.exports = {
-	setConfig
 	saveToBase: saveToBase,
 	getAllFromBase: getAllFromBase
 }

@@ -10,7 +10,7 @@ function parseTutBy(config, cb){
 		  for (var i in config){
 		  	res[i] = $(config[i]).text();
 		  }
-		  res.create = new Date();
+		  res.createtime = new Date();
 		  cb(res);
 		});
 }

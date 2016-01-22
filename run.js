@@ -9,9 +9,7 @@ var app = express();
 app.set('view engine', 'jade');
 app.set('port', (process.env.PORT || 5000));
 app.use('/public', express.static('public'));
-if(process.env.PORT){
-	
-}
+
 
 app.get('/', function (req, res) {
   res.render('index', { title: 'Hey', message: 'Hello there!'});
@@ -56,7 +54,7 @@ function saveParsed(){
 	parser.parseTutBy(conf, function (res) {
 	    db.saveToBase('grab_by', res);
 
-	    delete res.create;
+	    delete res.createtime;
 		res.buy = +res.buy.replace(' ', '');
 		res.sell = +res.sell.replace(' ', '');
 		if(!_.isEqual(courseTmp, res)){
@@ -72,4 +70,4 @@ function loop(){
 	saveParsed();
 	setTimeout(loop,2*60*1000);
 }
-loop();
+setTimeout(loop,2*1000);
